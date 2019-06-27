@@ -1,2 +1,2 @@
 # Auto-killing-in-Minecraft
-Automatically shoot down falling monsters with gong'jian in the dungeon.
+Automatically shoot down falling monsters with arrows in the dungeon.
