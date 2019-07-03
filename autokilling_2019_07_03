@@ -1,0 +1,136 @@
+import pyautogui as g
+import time as t
+from PIL import Image
+import math
+import operator
+from functools import reduce
+from PIL import ImageGrab
+
+
+g.PAUSE = 0.5
+g.FALLSAFE = True
+
+
+# 设定弓箭蓄力时间
+def gettime1():    
+    sec = float(input('请输入弓箭蓄力时间（s）'))
+    return sec
+
+# 设定每轮弓箭停顿时间
+def gettime2():     
+    pause = float(input('请输入每轮弓箭停顿时间（s）'))
+    return pause
+
+# 定义拉弓函数
+def pullthebow(time):
+    g.mouseDown(button = 'right')
+    t.sleep(time)
+    g.mouseUp(button = 'right')
+
+# 定义图像不吻合后判断循环函数
+def beginthecicle(pause):
+    global sec
+    pullthebow(sec)
+    t.sleep(pause)
+
+# 定义截图函数
+def prt(address):
+    ImageGrab.grab().save(address)
+
+# 定义对比函数
+def contrast(img1,img2):
+
+    image1 = Image.open(img1)
+    image2 = Image.open(img2)
+
+    c1 = image1.histogram()
+    c2 = image2.histogram()
+
+    ans = math.sqrt(reduce(operator.add,list(map(lambda a,b:(a-b)**2,c1,c2)))/len(c1))
+    print('差值为 %.2f'%ans)
+    return ans
+
+#开始运行
+while 1:
+    sec = gettime1()
+    if sec > 2:
+        print('弓箭蓄力时间不可大于2秒')
+        t.sleep(1) # 阅读提示时间
+    elif sec < 0:
+        print('请输入0-2秒间的蓄力时间')
+        t.sleep(1) # 阅读提示时间
+    # 确少一个报错机制
+    else:
+        break
+while 1:
+    pause = gettime2()
+    if sec > 2:
+        print('停顿时间不可大于2秒')
+        t.sleep(1) # 阅读提示时间
+    elif sec < 0:
+        print('请输入0-2秒间的停顿时间')
+        t.sleep(1) # 阅读提示时间
+    # 确少一个报错机制
+    else:
+        break
+
+k = float(input('请输入差阈 k (k>0)'))
+
+
+'''
+以下为 未优化 程序
+'''
+print('程序将于 5s 后开始运行，请进入预备界面')
+t.sleep(1)
+print('程序将于 4s 后开始运行，请进入预备界面')
+t.sleep(1)
+print('程序将于 3s 后开始运行，请进入预备界面')
+t.sleep(1)
+print('程序将于 2s 后开始运行，请进入预备界面')
+t.sleep(1)
+print('程序将于 1s 后开始运行，请进入预备界面')
+t.sleep(1)
+print('程序正在运行')
+t.sleep(1)
+
+
+
+
+print('开始存入本地图片')
+prt('./1.png')
+ans = 0.0
+print('开始存入对比图片')
+prt('./2.png')
+while 1:
+    if __name__ == '__main__':
+        img1 = './1.png'
+        img2 = './2.png'
+        ans = contrast(img1,img2)
+
+
+        if ans > k:
+            beginthecicle(pause)
+            print('1')
+        else:
+            t.sleep(3)
+            print('2')
+        print('开始存入对比图片')
+        prt('./2.png')
+    
+
+    
+
+
+'''
+开始
+用户确认没有怪物点击开始按钮
+保存当前屏幕作为对比图例
+等待3秒
+检测当前屏幕与截图重合度，
+重合度是否未超限
+是，等待三秒，继续循环
+否，蓄力鼠标右键2秒，射出。
+继续循环
+用户点击停止按钮
+跳出循环。
+'''
